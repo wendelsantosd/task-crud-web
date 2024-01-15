@@ -2,6 +2,7 @@ import { CreateTaskContext } from "@/context/context";
 import { formatDate } from "@/helpers/format/date";
 import { StatusType } from "@/services/api/task/protocols/changeStatusTask";
 import { changeStatusTask } from "@/services/api/task/useCase/changeStatusTask";
+import { addDaysToDate } from "@/utils/add-days-to-date";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { toast } from "react-toastify";
@@ -47,7 +48,7 @@ export const Card = ({ task }: CardProps) => {
         <div className={classToWrapper}>
           <p className={classToLabel}>Data para conclusão:</p>
           <p className={classToContent}>
-            {formatDate(task.completionDate, "dd/MM/yyyy")}
+            {formatDate(addDaysToDate(new Date(task.completionDate), 1), "dd/MM/yyyy")}
           </p>
         </div>
       </div>

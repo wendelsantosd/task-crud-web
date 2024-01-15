@@ -96,7 +96,12 @@ export default function Form() {
       setTask({
         ...response,
       });
-      setCompletionDate(formatDate(response.completionDate, "yyyy-MM-dd"));
+      setCompletionDate(
+        formatDate(
+          addDaysToDate(new Date(response.completionDate), 1),
+          "yyyy-MM-dd"
+        )
+      );
       setLoading && setLoading(false);
     } catch (error: any) {
       toast.error(
@@ -200,12 +205,7 @@ export default function Form() {
                 onChange={(e) => {
                   task.completionDate = e.target.value;
                   setTask(task);
-                  setCompletionDate(
-                    formatDate(
-                      addDaysToDate(new Date(e.target.value), 1),
-                      "yyyy-MM-dd"
-                    )
-                  );
+                  setCompletionDate(formatDate(e.target.value, "yyyy-MM-dd"));
                 }}
                 type="date"
               />
