@@ -1,7 +1,8 @@
 import { Card } from "@/components/card/Card"
+import { ITask } from "@/components/card/interface";
 
 export default function Task() {
-  const TASKS = [
+  const TASKS: ITask[] = [
     {
       "id": "16786688-18e4-4ddc-9201-f27a6a2c798b",
       "title": "Tarefa 1",
@@ -34,9 +35,9 @@ export default function Task() {
     }
   ]
 
-  const classToWrapCard = 'flex flex-col items-center w-96 bg-white mr-4 py-2 h-screen';
+  const classToWrapCard = 'flex flex-col items-center w-96 mr-4 py-2 h-screen';
   const classToTitleCard = 'text-xl font-semibold text-gray-600 mb-3';
-  return <div className="flex flex-col items-center bg-slate-50 h-screen w-full overflow-hidden">
+  return <div className="flex flex-col items-center bg-slate-50 h-screen w-full">
     <button className="mt-20 py-2 px-4 bg-green-500 text-white font-semibold rounded shadow-lg hover:bg-green-700 hover:shadow-sm hover:text-opacity-75 transition duration-300 ease-in-out">
       Criar Tarefa
     </button>
@@ -44,14 +45,14 @@ export default function Task() {
       <div className={classToWrapCard}>
         <p className={classToTitleCard}>Para fazer</p>
         {TASKS.map(item => {
-          if (item.status === 'Não concluído') return <Card />
+          if (item.status === 'Não concluído') return <Card task={item} key={item.id}/>
         })}
       </div>
 
       <div className={classToWrapCard}>
         <p className={classToTitleCard}>Feito</p>
         {TASKS.map(item => {
-          if (item.status === 'Concluído') return <Card />
+          if (item.status === 'Concluído') return <Card task={item} key={item.id}/>
         })}
       </div>
     </div>
