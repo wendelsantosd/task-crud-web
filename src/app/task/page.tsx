@@ -1,5 +1,5 @@
 import { Card } from "@/components/card/Card"
-import { ITask } from "@/components/card/interface";
+import { ITask } from "@/services/api/task/protocols/getTasks";
 
 export default function Task() {
   const TASKS: ITask[] = [
