@@ -30,6 +30,11 @@ export default function Task() {
               </p>
             );
           })}
+          {!tasks.length && (
+            <p className="font-semibold text-gray-600">
+              Não há tarefas aqui.
+            </p>
+          )}
         </div>
 
         <div className={classToWrapCard}>
@@ -43,6 +48,11 @@ export default function Task() {
               </p>
             );
           })}
+          {!tasks.length && (
+            <p className="font-semibold text-gray-600">
+              Não há tarefas aqui.
+            </p>
+          )}
         </div>
       </div>
     </div>
