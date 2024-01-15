@@ -25,6 +25,7 @@ export default function Form() {
     completionDate: formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"),
     priority: "Média",
   } as ITask);
+  const [completionDate, setCompletionDate] = useState('');
 
   const isValidData = () => {
     let isValidTitle = false;
@@ -85,9 +86,8 @@ export default function Form() {
       const response = await getTaskById({ id });
       setTask({
         ...response,
-        completionDate: formatDate(response.completionDate, "yyyy-MM-dd"),
       });
-      console.log(response);
+      setCompletionDate(formatDate(response.completionDate, "yyyy-MM-dd"))
       setLoading && setLoading(false);
     } catch (error: any) {
       toast.error(
@@ -101,7 +101,11 @@ export default function Form() {
   };
 
   useEffect(() => {
-    id && handleGetTaskById();
+    if (id) {
+      handleGetTaskById();
+    } else {
+      setCompletionDate(formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"))
+    }
   }, []);
 
   return (
@@ -164,10 +168,11 @@ export default function Form() {
               <label className="text-gray-700 mb-1">Data para conclusão</label>
               <input
                 className="rounded px-1 py-1 focus:outline-none border-2 border-gray-300 h-8"
-                defaultValue={task.completionDate}
+                defaultValue={completionDate}
                 onChange={(e) => {
                   task.completionDate = e.target.value;
                   setTask(task);
+                  setCompletionDate(formatDate(addDaysToDate(new Date(e.target.value), 1), "yyyy-MM-dd"))
                 }}
                 type="date"
               />
