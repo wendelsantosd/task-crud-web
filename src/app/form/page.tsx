@@ -142,7 +142,7 @@ export default function Form() {
 
   return (
     <div className="flex flex-col items-center bg-slate-50 h-screen w-full">
-      <div className="mt-20 py-4 px-4 bg-white w-4/12 rounded shadow-sm">
+      <div className="mt-20 py-4 px-4 bg-white w-4/12 rounded shadow-sm border-2 border-gray-200">
         <div className="flex justify-between mb-5">
           <p className="text-xl font-semibold text-gray-700">
             {id ? "Editar Tarefa" : "Criar Tarefa"}
