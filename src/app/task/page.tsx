@@ -16,7 +16,7 @@ export default function Task() {
         className="mt-20 py-2 px-4 bg-green-500 text-white font-semibold rounded shadow-lg hover:bg-green-700 hover:shadow-sm hover:text-opacity-75 transition duration-300 ease-in-out"
         onClick={() => router.replace("/form")}
       >
-        Criar Tarefa
+        Adicionar Tarefa
       </button>
       <div className="mt-10 flex justify-between w-3/6">
         <div className={classToWrapCard}>
