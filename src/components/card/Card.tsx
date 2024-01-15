@@ -18,7 +18,7 @@ export const Card = ({ task }: CardProps) => {
     </div>
     <div className={classToWrapper}>
       <p className={classToLabel}>Data para conclusão:</p>
-      <p className={classToContent}>{formatDate(task.completionDate)}</p>
+      <p className={classToContent}>{formatDate(task.completionDate, 'dd/MM/yyyy')}</p>
     </div>
     <div className={classToWrapper}>
       <p className={classToLabel}>Status:</p>
