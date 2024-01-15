@@ -77,8 +77,8 @@ export default function Form() {
         tasks.push(response.task);
         setTasks && setTasks(tasks);
         toast.success(response.message);
+        router.replace("/task");
       }
-      router.replace("/task");
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ?? "Houve um erro ao adicionar tarefa"
