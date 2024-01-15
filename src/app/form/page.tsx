@@ -4,6 +4,7 @@ import { CreateTaskContext } from "@/context/context";
 import { formatDate } from "@/helpers/format/date";
 import { ITask } from "@/services/api/task/protocols/getTasks";
 import { createTask } from "@/services/api/task/useCase/createTask";
+import { deleteTask } from "@/services/api/task/useCase/deleteTask";
 import { getTaskById } from "@/services/api/task/useCase/getTaskById";
 import { updateTask } from "@/services/api/task/useCase/updateTask";
 import { addDaysToDate } from "@/utils/add-days-to-date";
@@ -108,6 +109,24 @@ export default function Form() {
     }
   };
 
+  const handleDeleteTask = async () => {
+    try {
+      setLoading && setLoading(true);
+      const response = await deleteTask({ id });
+      const _tasks = tasks.filter((task) => task.id !== id);
+      setTasks && setTasks(_tasks);
+      toast.success(response.message);
+      setLoading && setLoading(false);
+      router.replace("/task");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ?? "Houve um erro ao deletar a tarefa"
+      );
+    } finally {
+      setLoading && setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       handleGetTaskById();
@@ -126,10 +145,7 @@ export default function Form() {
           {id && (
             <button
               className="flex items-center justify-center bg-red-600 w-10 shadow rounded hover:bg-red-700 hover:shadow-sm transaction duration-300 ease-in-out"
-              onClick={() => {
-                console.log(task);
-                console.log(fieldsWithError);
-              }}
+              onClick={handleDeleteTask}
             >
               <FaTrash className="text-white text-lg" />
             </button>
