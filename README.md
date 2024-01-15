@@ -14,10 +14,6 @@ Brain Agriculture Web
 
 </div>
 
-<div align="center">
-<img src="https://i.ibb.co/sW07fm8/Screenshot-from-2024-01-11-11-13-24.png">
-</div>
-
 # Overview
 
 The "Task CRUD" is a platform that allows creating, editing, deleting, and reading data. It is the response to a challenge proposed by a company. It was built using Next.js with TypeScript and Tailwindcss.
