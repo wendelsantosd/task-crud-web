@@ -2,6 +2,7 @@
 
 import { formatDate } from "@/helpers/format/date";
 import { ITask } from "@/services/api/task/protocols/getTasks";
+import { addDaysToDate } from "@/utils/add-days-to-date";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
@@ -12,7 +13,7 @@ export default function Form() {
   tomorrow.setDate(today.getDate() + 1);
 
   const [formData, setFormData] = useState<ITask>({
-    completionDate: formatDate(tomorrow.toISOString(), "yyyy-MM-dd"),
+    completionDate: formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"),
     priority: "Média",
   } as ITask);
   const [fieldsWithError, setFieldsWithError] = useState<string[]>([]);
