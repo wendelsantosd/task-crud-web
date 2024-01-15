@@ -5,6 +5,7 @@ import { formatDate } from "@/helpers/format/date";
 import { ITask } from "@/services/api/task/protocols/getTasks";
 import { createTask } from "@/services/api/task/useCase/createTask";
 import { getTaskById } from "@/services/api/task/useCase/getTaskById";
+import { updateTask } from "@/services/api/task/useCase/updateTask";
 import { addDaysToDate } from "@/utils/add-days-to-date";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -12,20 +13,18 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 export default function Form() {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
   const { loading, setLoading, tasks, setTasks } =
     useContext(CreateTaskContext);
+  const tomorrow = formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd");
   const [fieldsWithError, setFieldsWithError] = useState<string[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id") ?? "";
   const [task, setTask] = useState<ITask>({
-    completionDate: formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"),
+    completionDate: tomorrow,
     priority: "Média",
   } as ITask);
-  const [completionDate, setCompletionDate] = useState('');
+  const [completionDate, setCompletionDate] = useState("");
 
   const isValidData = () => {
     let isValidTitle = false;
@@ -66,10 +65,19 @@ export default function Form() {
     if (!isValidData()) return;
     try {
       setLoading && setLoading(true);
-      const response = await createTask({ ...task });
-      tasks.push(response.task);
-      setTasks && setTasks(tasks);
-      toast.success(response.message);
+
+      if (id) {
+        const response = await updateTask({ id, task });
+        const _tasks = tasks.filter((task) => task.id !== id);
+        _tasks.push(response.task);
+        setTasks && setTasks(_tasks);
+        toast.success(response.message);
+      } else {
+        const response = await createTask({ ...task });
+        tasks.push(response.task);
+        setTasks && setTasks(tasks);
+        toast.success(response.message);
+      }
       router.replace("/task");
     } catch (error: any) {
       toast.error(
@@ -87,7 +95,7 @@ export default function Form() {
       setTask({
         ...response,
       });
-      setCompletionDate(formatDate(response.completionDate, "yyyy-MM-dd"))
+      setCompletionDate(formatDate(response.completionDate, "yyyy-MM-dd"));
       setLoading && setLoading(false);
     } catch (error: any) {
       toast.error(
@@ -104,7 +112,7 @@ export default function Form() {
     if (id) {
       handleGetTaskById();
     } else {
-      setCompletionDate(formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"))
+      setCompletionDate(tomorrow);
     }
   }, []);
 
@@ -112,16 +120,20 @@ export default function Form() {
     <div className="flex flex-col items-center bg-slate-50 h-screen w-full">
       <div className="mt-20 py-4 px-4 bg-white w-4/12 rounded shadow-sm">
         <div className="flex justify-between mb-5">
-          <p className="text-xl font-semibold text-gray-700">Criar Tarefa</p>
-          <button
-            className="flex items-center justify-center bg-red-600 w-10 shadow rounded hover:bg-red-700 hover:shadow-sm transaction duration-300 ease-in-out"
-            onClick={() => {
-              console.log(task);
-              console.log(fieldsWithError);
-            }}
-          >
-            <FaTrash className="text-white text-lg" />
-          </button>
+          <p className="text-xl font-semibold text-gray-700">
+            {id ? "Editar Tarefa" : "Criar Tarefa"}
+          </p>
+          {id && (
+            <button
+              className="flex items-center justify-center bg-red-600 w-10 shadow rounded hover:bg-red-700 hover:shadow-sm transaction duration-300 ease-in-out"
+              onClick={() => {
+                console.log(task);
+                console.log(fieldsWithError);
+              }}
+            >
+              <FaTrash className="text-white text-lg" />
+            </button>
+          )}
         </div>
 
         <form>
@@ -172,7 +184,12 @@ export default function Form() {
                 onChange={(e) => {
                   task.completionDate = e.target.value;
                   setTask(task);
-                  setCompletionDate(formatDate(addDaysToDate(new Date(e.target.value), 1), "yyyy-MM-dd"))
+                  setCompletionDate(
+                    formatDate(
+                      addDaysToDate(new Date(e.target.value), 1),
+                      "yyyy-MM-dd"
+                    )
+                  );
                 }}
                 type="date"
               />
@@ -212,7 +229,7 @@ export default function Form() {
               onClick={handleSubmitSave}
               disabled={loading}
             >
-              Adicionar
+              {id ? "Editar" : "Adicionar"}
             </button>
             <button
               className="mt-5 py-2 px-4 bg-blue-500 text-white font-semibold rounded shadow-lg hover:bg-blue-700 hover:shadow-sm hover:text-opacity-75 transition duration-300 ease-in-out mr-5"
