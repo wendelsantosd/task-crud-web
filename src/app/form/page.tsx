@@ -164,10 +164,7 @@ export default function Form() {
               <label className="text-gray-700 mb-1">Data para conclusão</label>
               <input
                 className="rounded px-1 py-1 focus:outline-none border-2 border-gray-300 h-8"
-                defaultValue={
-                  task.completionDate ??
-                  formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd")
-                }
+                defaultValue={task.completionDate}
                 onChange={(e) => {
                   task.completionDate = e.target.value;
                   setTask(task);
