@@ -1,5 +1,5 @@
 export interface IGetTasksResponse {
-  farmers: ITask[];
+  tasks: ITask[];
   metadata: {
     count: number;
   };

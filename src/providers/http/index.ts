@@ -7,7 +7,7 @@ type IHttpDTO = {
 };
 
 export const makeHttp = ({
-  baseURL = import.meta.env.VITE_REACT_APP_API_URL,
+  baseURL = process.env.APP_API_URL,
   headers = {},
 }: IHttpDTO = {}): HttpClient => {
   
