@@ -48,24 +48,32 @@ export const Card = ({ task }: CardProps) => {
         <div className={classToWrapper}>
           <p className={classToLabel}>Data para conclusão:</p>
           <p className={classToContent}>
-            {formatDate(addDaysToDate(new Date(task.completionDate), 1), "dd/MM/yyyy")}
+            {formatDate(
+              addDaysToDate(new Date(task.completionDate), 1),
+              "dd/MM/yyyy"
+            )}
           </p>
         </div>
       </div>
       <div className={classToWrapper}>
         <p className={classToLabel}>Status:</p>
-        <div className="flex items-center">
-          <p className={classToContent}>{task.status}</p>
-          <input
-            className="ml-3 h-5 w-5 cursor-pointer"
-            type="checkbox"
-            checked={task.status === "Concluído"}
-            onClick={() => {
-              const newStatus = getStatus(task.status);
-              handleChangeStatus(newStatus);
-            }}
-          />
-        </div>
+        <select
+          className="text-sm text-gray-800 font-semibold bg-white focus:outline-none"
+          onChange={(e) => {
+            const newStatus = getStatus(task.status);
+            handleChangeStatus(newStatus);
+          }}
+        >
+          <option
+            value={"Não concluído"}
+            selected={task.status === "Não concluído"}
+          >
+            Não concluído
+          </option>
+          <option value={"Concluído"} selected={task.status === "Concluído"}>
+            Concluído
+          </option>
+        </select>
       </div>
     </div>
   );
