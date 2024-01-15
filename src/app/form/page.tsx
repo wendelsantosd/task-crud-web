@@ -1,17 +1,21 @@
 "use client";
 
+import { CreateTaskContext } from "@/context/context";
 import { formatDate } from "@/helpers/format/date";
 import { ITask } from "@/services/api/task/protocols/getTasks";
+import { createTask } from "@/services/api/task/useCase/createTask";
 import { addDaysToDate } from "@/utils/add-days-to-date";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function Form() {
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
-
+  const { loading, setLoading, tasks, setTasks } =
+    useContext(CreateTaskContext);
   const [formData, setFormData] = useState<ITask>({
     completionDate: formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"),
     priority: "Média",
@@ -27,7 +31,7 @@ export default function Form() {
       const _fieldsWithError = fieldsWithError.filter(
         (item) => item !== "title"
       );
-      setFieldsWithError(_fieldsWithError);
+      setFieldsWithError(_fieldsWithError as string[]);
       isValidTitle = true;
     } else {
       if (!fieldsWithError.includes("title")) {
@@ -42,20 +46,34 @@ export default function Form() {
         (item) => item !== "description"
       );
       setFieldsWithError(_fieldsWithError);
-      isValidTitle = true;
+      isValidDescription = true;
     } else {
       if (!fieldsWithError.includes("description")) {
         fieldsWithError.push("description");
         setFieldsWithError([...fieldsWithError]);
       }
-      isValidTitle = false;
+      isValidDescription = false;
     }
 
     return isValidTitle && isValidDescription;
   };
 
-  const handleSubmit = () => {
+  const handleSubmitSave = async () => {
     if (!isValidData()) return;
+    try {
+      setLoading && setLoading(true);
+      const response = await createTask({ ...formData });
+      tasks.push(response.task);
+      setTasks && setTasks(tasks);
+      toast.success(response.message);
+      router.replace("/task");
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ?? "Houve um erro ao adicionar tarefa"
+      );
+    } finally {
+      setLoading && setLoading(false);
+    }
   };
 
   return (
@@ -151,7 +169,8 @@ export default function Form() {
             <button
               className="mt-5 py-2 px-4 bg-green-500 text-white font-semibold rounded shadow-lg hover:bg-green-700 hover:shadow-sm hover:text-opacity-75 transition duration-300 ease-in-out mr-5"
               type="button"
-              onClick={handleSubmit}
+              onClick={handleSubmitSave}
+              disabled={loading}
             >
               Adicionar
             </button>
@@ -159,6 +178,7 @@ export default function Form() {
               className="mt-5 py-2 px-4 bg-blue-500 text-white font-semibold rounded shadow-lg hover:bg-blue-700 hover:shadow-sm hover:text-opacity-75 transition duration-300 ease-in-out mr-5"
               type="button"
               onClick={() => router.replace("/task")}
+              disabled={loading}
             >
               Voltar
             </button>

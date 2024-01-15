@@ -29,14 +29,15 @@ export const TaskProviderContext = ({ children }: Props): JSX.Element => {
 
   return <CreateTaskContext.Provider
     value={{
-      tasks: tasks,
-      setTasks: setTasks,
+      tasks,
+      loading,
+      setTasks,
+      setLoading,
     }}
   >
     <div className="relative">
       {children}
       {loading && <Loading />}
-      <ToastContainer />
     </div>
   </CreateTaskContext.Provider>
 }
