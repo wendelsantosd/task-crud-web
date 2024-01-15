@@ -44,7 +44,7 @@ yarn
 yarn dev
 ```
 
-# Brain Agriculture API
+# Task CRUD API
 
 ```shell
 https://github.com/wendelsantosd/task-crud-api
