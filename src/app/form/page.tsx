@@ -4,9 +4,10 @@ import { CreateTaskContext } from "@/context/context";
 import { formatDate } from "@/helpers/format/date";
 import { ITask } from "@/services/api/task/protocols/getTasks";
 import { createTask } from "@/services/api/task/useCase/createTask";
+import { getTaskById } from "@/services/api/task/useCase/getTaskById";
 import { addDaysToDate } from "@/utils/add-days-to-date";
-import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -16,18 +17,20 @@ export default function Form() {
   tomorrow.setDate(today.getDate() + 1);
   const { loading, setLoading, tasks, setTasks } =
     useContext(CreateTaskContext);
-  const [formData, setFormData] = useState<ITask>({
+  const [fieldsWithError, setFieldsWithError] = useState<string[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") ?? "";
+  const [task, setTask] = useState<ITask>({
     completionDate: formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd"),
     priority: "Média",
   } as ITask);
-  const [fieldsWithError, setFieldsWithError] = useState<string[]>([]);
-  const router = useRouter();
 
   const isValidData = () => {
     let isValidTitle = false;
     let isValidDescription = false;
 
-    if (formData.title && formData.title !== "") {
+    if (task.title && task.title !== "") {
       const _fieldsWithError = fieldsWithError.filter(
         (item) => item !== "title"
       );
@@ -41,7 +44,7 @@ export default function Form() {
       isValidTitle = false;
     }
 
-    if (formData.description && formData.description !== "") {
+    if (task.description && task.description !== "") {
       const _fieldsWithError = fieldsWithError.filter(
         (item) => item !== "description"
       );
@@ -62,7 +65,7 @@ export default function Form() {
     if (!isValidData()) return;
     try {
       setLoading && setLoading(true);
-      const response = await createTask({ ...formData });
+      const response = await createTask({ ...task });
       tasks.push(response.task);
       setTasks && setTasks(tasks);
       toast.success(response.message);
@@ -76,6 +79,31 @@ export default function Form() {
     }
   };
 
+  const handleGetTaskById = async () => {
+    try {
+      setLoading && setLoading(true);
+      const response = await getTaskById({ id });
+      setTask({
+        ...response,
+        completionDate: formatDate(response.completionDate, "yyyy-MM-dd"),
+      });
+      console.log(response);
+      setLoading && setLoading(false);
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ??
+          "Houve um erro ao buscar dados da tarefa"
+      );
+      router.replace("/task");
+    } finally {
+      setLoading && setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    id && handleGetTaskById();
+  }, []);
+
   return (
     <div className="flex flex-col items-center bg-slate-50 h-screen w-full">
       <div className="mt-20 py-4 px-4 bg-white w-4/12 rounded shadow-sm">
@@ -84,7 +112,7 @@ export default function Form() {
           <button
             className="flex items-center justify-center bg-red-600 w-10 shadow rounded hover:bg-red-700 hover:shadow-sm transaction duration-300 ease-in-out"
             onClick={() => {
-              console.log(formData);
+              console.log(task);
               console.log(fieldsWithError);
             }}
           >
@@ -97,9 +125,10 @@ export default function Form() {
             <label className="text-gray-700 mb-1">Título</label>
             <input
               className="rounded px-1 py-1 focus:outline-none border-2 border-gray-300"
+              defaultValue={task.title}
               onChange={(e) => {
-                formData.title = e.target.value;
-                setFormData(formData);
+                task.title = e.target.value;
+                setTask(task);
               }}
               placeholder="Digite o título da tarefa"
             />
@@ -115,9 +144,10 @@ export default function Form() {
             <label className="text-gray-700 mb-1">Descrição</label>
             <textarea
               className="rounded px-1 py-1 focus:outline-none border-2 border-gray-300 h-40"
+              defaultValue={task.description}
               onChange={(e) => {
-                formData.description = e.target.value;
-                setFormData(formData);
+                task.description = e.target.value;
+                setTask(task);
               }}
               placeholder="Digite a descrição da tarefa"
             />
@@ -134,12 +164,15 @@ export default function Form() {
               <label className="text-gray-700 mb-1">Data para conclusão</label>
               <input
                 className="rounded px-1 py-1 focus:outline-none border-2 border-gray-300 h-8"
+                defaultValue={
+                  task.completionDate ??
+                  formatDate(addDaysToDate(new Date(), 1), "yyyy-MM-dd")
+                }
                 onChange={(e) => {
-                  formData.completionDate = e.target.value;
-                  setFormData(formData);
+                  task.completionDate = e.target.value;
+                  setTask(task);
                 }}
                 type="date"
-                defaultValue={formData.completionDate}
               />
             </div>
 
@@ -153,14 +186,19 @@ export default function Form() {
                     e.target.value === "Média" ||
                     e.target.value === "Alta"
                   )
-                    formData.priority = e.target.value;
-                  setFormData(formData);
+                    task.priority = e.target.value;
+                  setTask(task);
                 }}
-                defaultValue={formData.priority}
               >
-                <option value={"Baixa"}>Baixa</option>
-                <option value={"Média"}>Média</option>
-                <option value={"Alta"}>Alta</option>
+                <option value={"Baixa"} selected={task.priority === "Baixa"}>
+                  Baixa
+                </option>
+                <option value={"Média"} selected={task.priority === "Média"}>
+                  Média
+                </option>
+                <option value={"Alta"} selected={task.priority === "Alta"}>
+                  Alta
+                </option>
               </select>
             </div>
           </div>
