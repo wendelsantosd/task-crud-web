@@ -24,6 +24,11 @@ export default function Task() {
           {tasks?.map((item) => {
             if (item.status === "Não concluído")
               return <Card task={item} key={item.id} />;
+            return (
+              <p className="font-semibold text-gray-600" key={item.id}>
+                Não há tarefas aqui.
+              </p>
+            );
           })}
         </div>
 
@@ -32,6 +37,11 @@ export default function Task() {
           {tasks?.map((item) => {
             if (item.status === "Concluído")
               return <Card task={item} key={item.id} />;
+            return (
+              <p className="font-semibold text-gray-600" key={item.id}>
+                Não há tarefas aqui.
+              </p>
+            );
           })}
         </div>
       </div>
