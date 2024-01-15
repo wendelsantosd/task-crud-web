@@ -32,7 +32,7 @@ export const Card = ({ task }: CardProps) => {
 
   const classToWrapper = "mt-2";
   const classToLabel = "text-sm text-neutral-700";
-  const classToContent = "text-gray-800";
+  const classToContent = "text-sm text-gray-800 font-semibold";
   return (
     <div className="py-2 px-2 mb-3 bg-white w-full rounded shadow-sm cursor-pointer">
       <div onClick={() => router.push(`/form?id=${task.id}`)}>
