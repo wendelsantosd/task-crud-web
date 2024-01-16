@@ -8,6 +8,12 @@ export default function Task() {
   const { tasks } = useContext(CreateTaskContext);
   const router = useRouter();
 
+  const hasTaskIncomplete = () =>
+    tasks.some((task) => task.status === "Não concluído");
+
+  const hasTaskComplete = () =>
+    tasks.some((task) => task.status === "Concluído");
+
   const classToWrapCard = "flex flex-col items-center w-96 mr-4 py-2 h-screen";
   const classToTitleCard = "text-xl font-semibold text-gray-600 mb-3";
   return (
@@ -24,16 +30,11 @@ export default function Task() {
           {tasks?.map((item) => {
             if (item.status === "Não concluído")
               return <Card task={item} key={item.id} />;
-            return (
-              <p className="font-semibold text-gray-600" key={item.id}>
-                Não há tarefas aqui.
-              </p>
-            );
           })}
-          {!tasks.length && (
-            <p className="font-semibold text-gray-600">
-              Não há tarefas aqui.
-            </p>
+          {!hasTaskIncomplete() ? (
+            <p className="font-semibold text-gray-600">Não há tarefas aqui.</p>
+          ) : (
+            ""
           )}
         </div>
 
@@ -42,16 +43,11 @@ export default function Task() {
           {tasks?.map((item) => {
             if (item.status === "Concluído")
               return <Card task={item} key={item.id} />;
-            return (
-              <p className="font-semibold text-gray-600" key={item.id}>
-                Não há tarefas aqui.
-              </p>
-            );
           })}
-          {!tasks.length && (
-            <p className="font-semibold text-gray-600">
-              Não há tarefas aqui.
-            </p>
+          {!hasTaskComplete() ? (
+            <p className="font-semibold text-gray-600">Não há tarefas aqui.</p>
+          ) : (
+            ""
           )}
         </div>
       </div>
